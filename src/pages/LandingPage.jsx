@@ -83,7 +83,7 @@ export default function LandingPage({ onStart, onAddWord }) {
         </button>
       </div>
       <div style={{ position: "absolute", bottom: "8rem", fontSize: "0.9rem", color: "#eee" }}>
-         ® Edward Morasch and Contributors 
+         © Made by Edward, Marlon, Alessandro, Matthias and Lina
       </div>
     </div>
   );
