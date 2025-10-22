@@ -76,6 +76,7 @@ export default function AddWordPage({ onBack }) {
         minHeight: "100vh",
         width: "100vw",
         display: "flex",
+        flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
         background: "linear-gradient(135deg, #6a11cb, #2575fc)",
@@ -83,8 +84,8 @@ export default function AddWordPage({ onBack }) {
         color: "#fff",
       }}
     >
-      <h1 style={{ position: "absolute", top: "18rem", fontSize: "2.5rem" }}>
-        ➕ Neue Begriffe hinzufügen
+      <h1 style={{ fontSize: "2.5rem", marginBottom: "3rem" }}>
+      ➕ Neue Begriffe hinzufügen
       </h1>
       <div style={{ display: "flex", alignItems: "center", gap: "2rem" }}>
         {/* Linke Seite: Felder */}
