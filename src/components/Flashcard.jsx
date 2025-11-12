@@ -1,14 +1,11 @@
-// src/components/Flashcard.jsx
-import React, { useState } from "react";
+import React from "react";
 import "./Flashcard.css";
 
-export default function Flashcard({ front, back }) {
-  const [flipped, setFlipped] = useState(false);
-
+export default function Flashcard({ front, back, flipped, onClick }) {
   return (
     <div
       className={`flashcard ${flipped ? "flipped" : ""}`}
-      onClick={() => setFlipped(!flipped)}
+      onClick={onClick} // State wird vom Parent gesteuert
     >
       <div className="flashcard-inner">
         <div className="flashcard-front">
@@ -21,5 +18,6 @@ export default function Flashcard({ front, back }) {
     </div>
   );
 }
+
 
 

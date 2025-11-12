@@ -5,18 +5,65 @@ export default function QuizPage({ vocab, onBack }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
 
+  // --- Karte wechseln ---
   const handleNext = () => {
-    if (currentIndex + 1 < vocab.length) { // nur wenn nächste Karte existiert, soll weitergegangen werden
-      setFlipped(false); // nächste Karte wird wieder von der Vorderseite gezeigt
+    if (currentIndex + 1 < vocab.length) {
+      setFlipped(false);
       setCurrentIndex((prev) => prev + 1);
     }
   };
 
   const handlePrev = () => {
-    if (currentIndex > 0) { // nur wenn vorherige Karte existiert, soll zurückgegangen werden
+    if (currentIndex > 0) {
       setFlipped(false);
       setCurrentIndex((prev) => prev - 1);
     }
+  };
+
+  // --- Text sprechen ---
+  const speakText = async () => {
+    const textToSpeak = flipped
+      ? vocab[currentIndex].back
+      : vocab[currentIndex].front;
+
+    try {
+      const response = await fetch("http://localhost:3001/api/speak", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: textToSpeak }),
+      });
+
+      if (!response.ok) throw new Error("Fehler beim Abspielen");
+
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+      await audio.play();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // --- Karte flippen ---
+  const handleFlip = () => {
+    setFlipped(!flipped);
+  };
+
+  // --- Button Style Template ---
+  const buttonStyle = (bgColor) => ({
+    padding: "1rem 2rem",
+    fontSize: "1.2rem",
+    borderRadius: "10px",
+    border: "none",
+    backgroundColor: bgColor,
+    color: "#fff",
+    cursor: "pointer",
+    boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
+    transition: "transform 0.2s",
+  });
+
+  const handleHover = (e, enter) => {
+    e.currentTarget.style.transform = enter ? "scale(1.05)" : "scale(1)";
   };
 
   return (
@@ -42,80 +89,60 @@ export default function QuizPage({ vocab, onBack }) {
       {vocab.length > 0 ? (
         <>
           <Flashcard
-            key={currentIndex} 
+            key={currentIndex}
             front={vocab[currentIndex].front}
             back={vocab[currentIndex].back}
-            flipped={flipped}            
-            onClick={() => setFlipped(!flipped)}  
+            flipped={flipped}
+            onClick={handleFlip}
           />
 
+          {/* Oben: Abspielen */}
+          <div style={{ marginTop: "2rem" }}>
+            <button
+              onClick={speakText}
+              style={buttonStyle("#28a745")}
+              onMouseEnter={(e) => handleHover(e, true)}
+              onMouseLeave={(e) => handleHover(e, false)}
+            >
+              🔊 Abspielen
+            </button>
+          </div>
 
-          <div
-            style={{
-              marginTop: "2rem",
-              display: "flex",
-              justifyContent: "space-between",
-              width: "400px",
-            }}
-          >
-            {/* Nur anzeigen, wenn vorherige Karte existiert */}
+          {/* Mitte: Vorherige / Nächste */}
+          <div style={{ display: "flex", gap: "1rem", marginTop: "1.5rem" }}>
             {currentIndex > 0 && (
               <button
                 onClick={handlePrev}
-                style={{
-                  padding: "0.8rem 1.5rem",
-                  border: "none",
-                  borderRadius: "8px",
-                  backgroundColor: "#6c757d",
-                  color: "#fff",
-                  fontSize: "1.1rem",
-                  cursor: "pointer",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")} // Vergrößern des Buttons beim Hovern
-                onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")} // Zurück zur Originalgröße beum Verlassen
+                style={buttonStyle("#6c757d")}
+                onMouseEnter={(e) => handleHover(e, true)}
+                onMouseLeave={(e) => handleHover(e, false)}
               >
                 ⬅️ Vorherige Karte
               </button>
             )}
-
-            {/* Nur anzeigen, wenn nächste Karte existiert */}
             {currentIndex < vocab.length - 1 && (
               <button
                 onClick={handleNext}
-                style={{
-                  padding: "0.8rem 1.5rem",
-                  border: "none",
-                  borderRadius: "8px",
-                  backgroundColor: "#ff6f61",
-                  color: "#fff",
-                  fontSize: "1.1rem",
-                  cursor: "pointer",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")} 
-                onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")} 
+                style={buttonStyle("#ff6f61")}
+                onMouseEnter={(e) => handleHover(e, true)}
+                onMouseLeave={(e) => handleHover(e, false)}
               >
                 👉 Nächste Karte
               </button>
             )}
           </div>
 
-          <button
-            onClick={onBack}
-            style={{
-              marginTop: "2rem",
-              padding: "0.8rem 1.5rem",
-              border: "none",
-              borderRadius: "8px",
-              backgroundColor: "#444",
-              color: "#fff",
-              fontSize: "1.1rem",
-              cursor: "pointer",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")} 
-            onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")} 
-          >
-            ⬅️ Zurück zur Startseite
-          </button>
+          {/* Unten: Zurück zur Startseite */}
+          <div style={{ marginTop: "2rem" }}>
+            <button
+              onClick={onBack}
+              style={buttonStyle("#444")}
+              onMouseEnter={(e) => handleHover(e, true)}
+              onMouseLeave={(e) => handleHover(e, false)}
+            >
+              ⬅️ Zurück zur Startseite
+            </button>
+          </div>
         </>
       ) : (
         <p>⚠️ Keine Vokabeln vorhanden. Bitte füge welche hinzu!</p>
@@ -123,4 +150,8 @@ export default function QuizPage({ vocab, onBack }) {
     </div>
   );
 }
+
+
+
+
 
