@@ -5,9 +5,25 @@ export default function QuizPage({ vocab, onBack }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
 
-  // --- Karte wechseln ---
+  const currentCard = vocab[currentIndex];
+
+  // ---- Deine alte funktionierende Speak-Logik ----
+  const handleSpeak = async () => {
+    const text = flipped ? currentCard.back : currentCard.front;
+
+    const res = await fetch("http://localhost:3001/api/speak", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+
+    const blob = await res.blob();
+    const audioURL = URL.createObjectURL(blob);
+    new Audio(audioURL).play();
+  };
+
   const handleNext = () => {
-    if (currentIndex + 1 < vocab.length) {
+    if (currentIndex < vocab.length - 1) {
       setFlipped(false);
       setCurrentIndex((prev) => prev + 1);
     }
@@ -20,51 +36,8 @@ export default function QuizPage({ vocab, onBack }) {
     }
   };
 
-  // --- Text sprechen ---
-  const speakText = async () => {
-    const textToSpeak = flipped
-      ? vocab[currentIndex].back
-      : vocab[currentIndex].front;
-
-    try {
-      const response = await fetch("http://localhost:3001/api/speak", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: textToSpeak }),
-      });
-
-      if (!response.ok) throw new Error("Fehler beim Abspielen");
-
-      const audioBlob = await response.blob();
-      const audioUrl = URL.createObjectURL(audioBlob);
-      const audio = new Audio(audioUrl);
-      await audio.play();
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  // --- Karte flippen ---
-  const handleFlip = () => {
-    setFlipped(!flipped);
-  };
-
-  // --- Button Style Template ---
-  const buttonStyle = (bgColor) => ({
-    padding: "1rem 2rem",
-    fontSize: "1.2rem",
-    borderRadius: "10px",
-    border: "none",
-    backgroundColor: bgColor,
-    color: "#fff",
-    cursor: "pointer",
-    boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
-    transition: "transform 0.2s",
-  });
-
-  const handleHover = (e, enter) => {
-    e.currentTarget.style.transform = enter ? "scale(1.05)" : "scale(1)";
-  };
+  // ---- Fortschrittsanzeige ----
+  const progressPercent = ((currentIndex + 1) / vocab.length) * 100;
 
   return (
     <div
@@ -84,68 +57,131 @@ export default function QuizPage({ vocab, onBack }) {
       }}
     >
       <h2 style={{ fontSize: "3rem", marginBottom: "0.5rem" }}>Vokabel-Quiz</h2>
-      <p style={{ marginBottom: "2rem" }}>Klicke auf die Karte, um die Bedeutung zu sehen.</p>
+
+      {/* --- Fortschritt Anzeige --- */}
+      <p style={{ fontSize: "1.3rem" }}>
+        Karte {currentIndex + 1} von {vocab.length}
+      </p>
+
+      <div
+        style={{
+          width: "80%",
+          height: "12px",
+          background: "rgba(255,255,255,0.3)",
+          borderRadius: "6px",
+          overflow: "hidden",
+          margin: "1rem 0 2rem 0",
+        }}
+      >
+        <div
+          style={{
+            width: `${progressPercent}%`,
+            height: "100%",
+            background: "#f4f80dff",
+            transition: "width 0.3s ease",
+          }}
+        />
+      </div>
 
       {vocab.length > 0 ? (
         <>
           <Flashcard
             key={currentIndex}
-            front={vocab[currentIndex].front}
-            back={vocab[currentIndex].back}
+            front={currentCard.front}
+            back={currentCard.back}
             flipped={flipped}
-            onClick={handleFlip}
+            onClick={() => setFlipped(!flipped)}
           />
 
-          {/* Oben: Abspielen */}
-          <div style={{ marginTop: "2rem" }}>
-            <button
-              onClick={speakText}
-              style={buttonStyle("#28a745")}
-              onMouseEnter={(e) => handleHover(e, true)}
-              onMouseLeave={(e) => handleHover(e, false)}
-            >
-              🔊 Abspielen
-            </button>
-          </div>
+          {/* --- Speak Button --- */}
+          <button
+            onClick={handleSpeak}
+            style={{
+              marginTop: "1.5rem",
+              padding: "0.8rem 1.5rem",
+              border: "none",
+              borderRadius: "10px",
+              backgroundColor: "#ff6f61",
+              color: "#fff",
+              fontSize: "1.2rem",
+              cursor: "pointer",
+              boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+            onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+          >
+            🔊 Aussprechen
+          </button>
 
-          {/* Mitte: Vorherige / Nächste */}
-          <div style={{ display: "flex", gap: "1rem", marginTop: "1.5rem" }}>
+          {/* --- Navigation --- */}
+          <div
+            style={{
+              marginTop: "2rem",
+              display: "flex",
+              justifyContent: "space-between",
+              width: "400px",
+            }}
+          >
             {currentIndex > 0 && (
               <button
                 onClick={handlePrev}
-                style={buttonStyle("#6c757d")}
-                onMouseEnter={(e) => handleHover(e, true)}
-                onMouseLeave={(e) => handleHover(e, false)}
+                style={{
+                  padding: "1.0rem 2.7rem",
+                  border: "none",
+                  borderRadius: "8px",
+                  backgroundColor: "#6c757d",
+                  color: "#fff",
+                  fontSize: "1.1rem",
+                  cursor: "pointer",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+                onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
               >
-                ⬅️ Vorherige Karte
+                ⬅️ Vorherige
               </button>
             )}
+
             {currentIndex < vocab.length - 1 && (
               <button
                 onClick={handleNext}
-                style={buttonStyle("#ff6f61")}
-                onMouseEnter={(e) => handleHover(e, true)}
-                onMouseLeave={(e) => handleHover(e, false)}
+                style={{
+                  padding: "1.0rem 2.7rem",
+                  border: "none",
+                  borderRadius: "8px",
+                  backgroundColor: "#24b63cff",
+                  color: "#fff",
+                  fontSize: "1.1rem",
+                  cursor: "pointer",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+                onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
               >
-                👉 Nächste Karte
+                Nächste ➡️
               </button>
             )}
           </div>
 
-          {/* Unten: Zurück zur Startseite */}
-          <div style={{ marginTop: "2rem" }}>
-            <button
-              onClick={onBack}
-              style={buttonStyle("#444")}
-              onMouseEnter={(e) => handleHover(e, true)}
-              onMouseLeave={(e) => handleHover(e, false)}
-            >
-              ⬅️ Zurück zur Startseite
-            </button>
-          </div>
+          {/* --- Zurück --- */}
+          <button
+            onClick={onBack}
+            style={{
+              marginTop: "2rem",
+              padding: "0.8rem 1.5rem",
+              border: "none",
+              borderRadius: "8px",
+              backgroundColor: "#444",
+              color: "#fff",
+              fontSize: "1.1rem",
+              cursor: "pointer",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+            onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+          >
+            ⬅️ Zurück zur Startseite
+          </button>
         </>
       ) : (
-        <p>⚠️ Keine Vokabeln vorhanden. Bitte füge welche hinzu!</p>
+        <p>⚠️ Keine Vokabeln vorhanden.</p>
       )}
     </div>
   );
