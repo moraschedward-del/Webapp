@@ -1,13 +1,14 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Flashcard from "../components/Flashcard";
 
-export default function QuizPage({ vocab, onBack }) {
+export default function QuizPage({ vocab, fetchVocab, loading, error }) {
+  const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
 
   const currentCard = vocab[currentIndex];
 
-  // ---- Deine alte funktionierende Speak-Logik ----
   const handleSpeak = async () => {
     const text = flipped ? currentCard.back : currentCard.front;
 
@@ -36,7 +37,6 @@ export default function QuizPage({ vocab, onBack }) {
     }
   };
 
-  // ---- Fortschrittsanzeige ----
   const progressPercent = ((currentIndex + 1) / vocab.length) * 100;
 
   return (
@@ -56,9 +56,10 @@ export default function QuizPage({ vocab, onBack }) {
         textAlign: "center",
       }}
     >
-      <h2 style={{ fontSize: "3rem", marginBottom: "0.5rem" }}>Vokabel-Quiz</h2>
+      <h2 style={{ fontSize: "3rem", marginBottom: "0.5rem" }}>
+        Vokabel-Quiz
+      </h2>
 
-      {/* --- Fortschritt Anzeige --- */}
       <p style={{ fontSize: "1.3rem" }}>
         Karte {currentIndex + 1} von {vocab.length}
       </p>
@@ -93,7 +94,6 @@ export default function QuizPage({ vocab, onBack }) {
             onClick={() => setFlipped(!flipped)}
           />
 
-          {/* --- Speak Button --- */}
           <button
             onClick={handleSpeak}
             style={{
@@ -107,13 +107,16 @@ export default function QuizPage({ vocab, onBack }) {
               cursor: "pointer",
               boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-            onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.transform = "scale(1.05)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.transform = "scale(1)")
+            }
           >
             🔊 Aussprechen
           </button>
 
-          {/* --- Navigation --- */}
           <div
             style={{
               marginTop: "2rem",
@@ -134,8 +137,12 @@ export default function QuizPage({ vocab, onBack }) {
                   fontSize: "1.1rem",
                   cursor: "pointer",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-                onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.transform = "scale(1.05)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.transform = "scale(1)")
+                }
               >
                 ⬅️ Vorherige
               </button>
@@ -153,17 +160,20 @@ export default function QuizPage({ vocab, onBack }) {
                   fontSize: "1.1rem",
                   cursor: "pointer",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-                onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.transform = "scale(1.05)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.transform = "scale(1)")
+                }
               >
                 Nächste ➡️
               </button>
             )}
           </div>
 
-          {/* --- Zurück --- */}
           <button
-            onClick={onBack}
+            onClick={() => navigate("/")}
             style={{
               marginTop: "2rem",
               padding: "0.8rem 1.5rem",
@@ -174,8 +184,12 @@ export default function QuizPage({ vocab, onBack }) {
               fontSize: "1.1rem",
               cursor: "pointer",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-            onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.transform = "scale(1.05)")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.transform = "scale(1)")
+            }
           >
             ⬅️ Zurück zur Startseite
           </button>
@@ -186,8 +200,3 @@ export default function QuizPage({ vocab, onBack }) {
     </div>
   );
 }
-
-
-
-
-

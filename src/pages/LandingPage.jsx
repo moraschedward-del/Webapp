@@ -1,92 +1,84 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
-export default function LandingPage({ onStart, onAddWord }) {
-  const emojis = ["🖥️", "💾", "🖱️", "📡", "⚙️", "💻", "🧩", "🕹️"];
+export default function LandingPage() {
+  const navigate = useNavigate();
 
   return (
     <div
       style={{
+        margin: 0,
+        padding: "2rem",
         minHeight: "100vh",
         width: "100vw",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        background: "linear-gradient(135deg, #4a90e2, #50e3c2)",
+        background: "linear-gradient(135deg, #4a738f, #4e4376)",
         color: "#fff",
-        fontFamily: "Arial, sans-serif",
-        textAlign: "center",
-        position: "relative",
       }}
     >
-      {/* Überschrift */}
-      <h1 style={{ fontSize: "4rem", marginBottom: "1rem" }}>
-        💡 Vokabel Trainer
+      <h1 style={{ fontSize: "4rem", marginBottom: "0.5rem" }}>
+        Vokabeltrainer
       </h1>
-      <p style={{ fontSize: "1.5rem", marginBottom: "2rem" }}>
-        Übe deine Informatik-Begriffe spielerisch und lerne schnell!
+
+      {/* Informatik Emojis */}
+      <p style={{ fontSize: "2rem", marginBottom: "2rem" }}>
+        💻 🧠 ⚙️ 🔧 🔐 🖥️
       </p>
 
-      {/* Emojis in einer Reihe in der Mitte */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          gap: "1rem",
-          marginBottom: "3rem",
-          fontSize: "3rem",
-        }}
-      >
-        {emojis.map((emoji, index) => (
-          <span key={index}>{emoji}</span>
-        ))}
-      </div>
-
       {/* Buttons */}
-      <div style={{ display: "flex", gap: "1rem" }}>
-        <button
-          onClick={onStart}
-          style={{
-            padding: "1rem 2rem",
-            fontSize: "1.2rem",
-            borderRadius: "10px",
-            border: "none",
-            backgroundColor: "#ff6f61",
-            color: "#fff",
-            cursor: "pointer",
-            boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
-            transition: "transform 0.2s",
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")} // Vergrößern des Buttons beim Hovern
-          onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")} // Zurück zur Originalgröße beum Verlassen
-        >
-          🚀 Starte Training
-        </button>
+      <button
+        onClick={() => navigate("/quiz")}
+        style={btn("#24b63c")}
+        onMouseEnter={(e) =>
+          (e.currentTarget.style.transform = "scale(1.05)")
+        }
+        onMouseLeave={(e) =>
+          (e.currentTarget.style.transform = "scale(1)")
+        }
+      >
+        🚀 Quiz starten
+      </button>
 
-        <button
-          onClick={onAddWord}
-          style={{
-            padding: "1rem 2rem",
-            fontSize: "1.2rem",
-            borderRadius: "10px",
-            border: "none",
-            backgroundColor: "#4a90e2",
-            color: "#fff",
-            cursor: "pointer",
-            boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
-            transition: "transform 0.2s",
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-          onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")} 
-        >
-          ➕ Neue Begriffe hinzufügen
-        </button>
-      </div>
-      <div style={{ position: "absolute", bottom: "8rem", fontSize: "0.9rem", color: "#eee" }}>
-         © Made by Edward, Lina and Marlon
-      </div>
+      <button
+        onClick={() => navigate("/add")}
+        style={btn("#ff6f61")}
+        onMouseEnter={(e) =>
+          (e.currentTarget.style.transform = "scale(1.05)")
+        }
+        onMouseLeave={(e) =>
+          (e.currentTarget.style.transform = "scale(1)")
+        }
+      >
+        ➕ Vokabel hinzufügen
+      </button>
+
+      <button
+        onClick={() => navigate("/info")}
+        style={btn("#6c757d")}
+        onMouseEnter={(e) =>
+          (e.currentTarget.style.transform = "scale(1.05)")
+        }
+        onMouseLeave={(e) =>
+          (e.currentTarget.style.transform = "scale(1)")
+        }
+      >
+        ℹ️ Info
+      </button>
     </div>
   );
 }
 
-
+const btn = (color) => ({
+  margin: "1rem",
+  padding: "1rem 2rem",
+  background: color,
+  border: "none",
+  borderRadius: "12px",
+  color: "white",
+  fontSize: "1.3rem",
+  cursor: "pointer",
+  transition: "transform 0.2s ease",
+});

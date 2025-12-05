@@ -1,32 +1,31 @@
 import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 import LandingPage from "./pages/LandingPage";
 import QuizPage from "./pages/QuizPage";
 import AddWordPage from "./pages/AddWordPage";
+import InfoPage from "./pages/InfoPage";
 
 export default function App() {
-  const [page, setPage] = useState("landing");
   const [vocab, setVocab] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Funktion zum Abrufen der Vokabeln vom Backend
   const fetchVocab = async () => {
     setLoading(true);
     setError("");
     try {
       const res = await fetch("http://localhost:3001/api/vocab");
       if (!res.ok) throw new Error("Fehler beim Laden der Vokabeln");
-      const data = await res.json(); // Erwartet ein Array von Vokabeln vom Server
+      const data = await res.json();
       setVocab(data);
     } catch (err) {
-      console.error(err);
       setError("⚠️ Konnte Vokabeln nicht laden. Server erreichbar?");
     } finally {
       setLoading(false);
     }
   };
 
-  // Funktion zum Hinzufügen einer neuen Vokabel
   const handleAddWord = async (word) => {
     try {
       const res = await fetch("http://localhost:3001/api/vocab", {
@@ -39,46 +38,43 @@ export default function App() {
         alert(data.error || "Fehler beim Hinzufügen der Vokabel");
         return;
       }
-      // Nach erfolgreichem Hinzufügen die Vokabelliste aktualisieren
-      fetchVocab();
+      fetchVocab(); // sofort aktualisieren
     } catch (err) {
-      console.error(err);
       alert("⚠️ Fehler beim Hinzufügen. Server erreichbar?");
     }
   };
 
-  // Quiz-Seite lädt die Vokabeln, wenn sie angezeigt wird
   useEffect(() => {
-    if (page === "quiz") {
-      fetchVocab();
-    }
-  }, [page]);
+    fetchVocab();
+  }, []);
 
   return (
-    <>
-      {page === "landing" && (
-        <LandingPage
-          onStart={() => setPage("quiz")}
-          onAddWord={() => setPage("addWord")}
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route
+          path="/quiz"
+          element={
+            <QuizPage
+              vocab={vocab}
+              loading={loading}
+              error={error}
+              fetchVocab={fetchVocab}
+            />
+          }
         />
-      )}
-
-      {page === "quiz" && (
-        <QuizPage
-          vocab={vocab}
-          loading={loading}
-          error={error}
-          onBack={() => setPage("landing")}
+        <Route
+          path="/add"
+          element={
+            <AddWordPage
+              vocab={vocab}
+              onAddWord={handleAddWord}
+              fetchVocab={fetchVocab}
+            />
+          }
         />
-      )}
-
-      {page === "addWord" && (
-        <AddWordPage
-          onBack={() => setPage("landing")}
-          onAddWord={handleAddWord}
-          vocab={vocab}
-        />
-      )}
-    </>
+        <Route path="/info" element={<InfoPage />} />
+      </Routes>
+    </Router>
   );
 }
