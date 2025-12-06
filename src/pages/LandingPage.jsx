@@ -1,3 +1,4 @@
+// PORTFOLIOPRÜFUNG ALESSANDRO
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -71,6 +72,7 @@ export default function LandingPage() {
   );
 }
 
+// Stil für die Buttons
 const btn = (color) => ({
   margin: "1rem",
   padding: "1rem 2rem",

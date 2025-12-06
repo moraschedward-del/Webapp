@@ -1,3 +1,4 @@
+// PORTFOLIOPRÜFUNG EDWARD
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
@@ -6,11 +7,13 @@ import QuizPage from "./pages/QuizPage";
 import AddWordPage from "./pages/AddWordPage";
 import InfoPage from "./pages/InfoPage";
 
+// State für die Vokabelliste und Funktionen zum Laden/Hinzufügen von Vokabeln
 export default function App() {
   const [vocab, setVocab] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Funktion zum Laden der Vokabeln vom Server
   const fetchVocab = async () => {
     setLoading(true);
     setError("");
@@ -26,6 +29,7 @@ export default function App() {
     }
   };
 
+  // Funktion zum Hinzufügen einer neuen Vokabel
   const handleAddWord = async (word) => {
     try {
       const res = await fetch("http://localhost:3001/api/vocab", {
@@ -44,10 +48,12 @@ export default function App() {
     }
   };
 
+  // Vokabeln beim Start laden
   useEffect(() => {
     fetchVocab();
   }, []);
 
+  // Routen der einzelnen Seiten
   return (
     <Router>
       <Routes>

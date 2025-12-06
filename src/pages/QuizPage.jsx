@@ -1,3 +1,4 @@
+// PORTFOLIOPRÜFUNG ALESSANDRO
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Flashcard from "../components/Flashcard";
@@ -9,6 +10,7 @@ export default function QuizPage({ vocab, fetchVocab, loading, error }) {
 
   const currentCard = vocab[currentIndex];
 
+  // Funktion zum Aussprechen der Vokabel
   const handleSpeak = async () => {
     const text = flipped ? currentCard.back : currentCard.front;
 
@@ -23,6 +25,7 @@ export default function QuizPage({ vocab, fetchVocab, loading, error }) {
     new Audio(audioURL).play();
   };
 
+  // Funktionen zum Navigieren durch die Karten (Nächste/Vorherige)
   const handleNext = () => {
     if (currentIndex < vocab.length - 1) {
       setFlipped(false);
@@ -37,7 +40,8 @@ export default function QuizPage({ vocab, fetchVocab, loading, error }) {
     }
   };
 
-  const progressPercent = ((currentIndex + 1) / vocab.length) * 100;
+  // Fortschrittsanzeige berechnen
+  const progressPercent = ((currentIndex + 1) / vocab.length) * 100; 
 
   return (
     <div
@@ -85,6 +89,7 @@ export default function QuizPage({ vocab, fetchVocab, loading, error }) {
       </div>
 
       {vocab.length > 0 ? (
+        // Wenn Vokabeln vorhanden sind, zeige die Flashcard und Navigation
         <>
           <Flashcard
             key={currentIndex}
@@ -94,6 +99,7 @@ export default function QuizPage({ vocab, fetchVocab, loading, error }) {
             onClick={() => setFlipped(!flipped)}
           />
 
+          /* Einzelne Buttons */
           <button
             onClick={handleSpeak}
             style={{

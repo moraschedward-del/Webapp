@@ -1,3 +1,4 @@
+// PORTFOLIOPRÜFUNG EDWARD
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
@@ -7,15 +8,16 @@ import dotenv from "dotenv";
 import { GoogleGenAI } from "@google/genai";
 import fetch from "node-fetch";
 
-dotenv.config();
+dotenv.config(); // lädt Umgebungsvariablen aus .env-Datei
 
+// Webserver erstellen mit dem jeweiligen Port
 const app = express();
 const PORT = 3001;
 
 app.use(cors());
 app.use(bodyParser.json());
 
-// --- SQLite-Datenbank starten ---
+//  SQLite-Datenbank starten  und Tabelle erstellen, falls nicht vorhanden
 let db;
 (async () => {
   db = await open({
@@ -34,12 +36,12 @@ let db;
   console.log("✅ Datenbank verbunden & Tabelle bereit.");
 })();
 
-// --- Test-Route ---
+// Test-Route 
 app.get("/test", (req, res) => {
   res.send("Server läuft!");
 });
 
-// --- Alle Vokabeln abrufen ---
+// Alle Vokabeln abrufen 
 app.get("/api/vocab", async (req, res) => {
   try {
     const rows = await db.all("SELECT * FROM vocab");
@@ -50,7 +52,7 @@ app.get("/api/vocab", async (req, res) => {
   }
 });
 
-// --- Neue Vokabel einfügen ---
+// Neue Vokabel einfügen 
 app.post("/api/vocab", async (req, res) => {
   const { front, back } = req.body;
   if (!front || !back)
@@ -72,7 +74,7 @@ app.post("/api/vocab", async (req, res) => {
   }
 });
 
-// --- Gemini AI Route ---
+// Gemini AI Route 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 app.post("/api/generate", async (req, res) => {
@@ -103,8 +105,8 @@ Antwortformat: Begriff: <Begriff> Bedeutung: <Bedeutung>`;
   }
 });
 
-// --- ElevenLabs TTS ---
-const ELEVEN_VOICE_ID = "JiW03c2Gt43XNUQAumRP"; // Stimme direkt im Code
+// ElevenLabs TTS 
+const ELEVEN_VOICE_ID = "JiW03c2Gt43XNUQAumRP"; // ID für einen deutschen Sprecher 
 
 app.post("/api/speak", async (req, res) => {
   const { text } = req.body;
@@ -132,7 +134,7 @@ app.post("/api/speak", async (req, res) => {
   }
 });
 
-// --- Server starten ---
+// Server starten
 app.listen(PORT, () => {
   console.log(`🚀 Server läuft auf Port ${PORT}`);
   if (process.env.GEMINI_API_KEY) console.log("✅ Gemini API aktiviert");

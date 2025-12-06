@@ -5,7 +5,8 @@ https://aistudio.google.com/app/api-keys.
 Im Verzeichnis ~/Webapp muss noch npm install @google/genai installiert werden.
 
 In der zweiten Zeile der .env Datei ELEVENLABS_API_KEY=Dein_API_KEY anlegen. DEIN_API_KEY soll ersetzt werden durch einen unique API KEY den man
-ähnlich wie bei Google AI Studio nach dem Log In generieren kann https://elevenlabs.io/app/developers/api-keys. 
+ähnlich wie bei Google AI Studio nach dem Log In generieren kann https://elevenlabs.io/app/developers/api-keys. Bei den Einstellungen des API KEYS sollte
+Text to Speech auf Access gesetzt werden.
 
 Es muss einmalig im Verzeichnis ~/Webapp der Befehl npm install ausgeführt werden.
 

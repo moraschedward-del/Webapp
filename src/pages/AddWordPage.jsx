@@ -1,3 +1,4 @@
+// PORTFOLIOPRÜFUNG EDWARD
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -9,16 +10,19 @@ export default function AddWordPage({ onAddWord, fetchVocab }) {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Funktion zum Absenden des Formulars
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
+    // Validierung der Eingaben
     if (!front.trim() || !back.trim()) {
       setError("⚠️ Bitte beide Felder ausfüllen!");
       return;
     }
 
+    // Vokabeln zum Server senden
     try {
       const response = await fetch("http://localhost:3001/api/vocab", {
         method: "POST",
@@ -42,11 +46,13 @@ export default function AddWordPage({ onAddWord, fetchVocab }) {
     }
   };
 
+  // Funktion zum Generieren einer Vokabel via KI
   const handleGenerate = async () => {
     setError("");
     setSuccess("");
     setLoading(true);
 
+    // Anfrage an den Server zur KI-Generierung
     try {
       const response = await fetch("http://localhost:3001/api/generate", {
         method: "POST",

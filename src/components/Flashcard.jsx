@@ -1,3 +1,4 @@
+// PORTFOLIOPRÜFUNG MATTHIAS
 import React from "react";
 import "./Flashcard.css";
 
@@ -5,7 +6,7 @@ export default function Flashcard({ front, back, flipped, onClick }) {
   return (
     <div
       className={`flashcard ${flipped ? "flipped" : ""}`}
-      onClick={onClick} // State wird vom Parent gesteuert
+      onClick={onClick} 
     >
       <div className="flashcard-inner">
         <div className="flashcard-front">
