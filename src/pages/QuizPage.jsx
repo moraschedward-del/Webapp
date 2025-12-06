@@ -99,7 +99,6 @@ export default function QuizPage({ vocab, fetchVocab, loading, error }) {
             onClick={() => setFlipped(!flipped)}
           />
 
-          /* Einzelne Buttons */
           <button
             onClick={handleSpeak}
             style={{
